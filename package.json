@@ -1,0 +1,23 @@
+{
+  "name": "supersimplemonitoring",
+  "version": "1.0.0",
+  "description": "Monitor your servers with this super simple monitoring solution Edit",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebastianhaeni/supersimplemonitoring.git"
+  },
+  "author": {
+    "name": "Sebastian Häni",
+    "email": "haeni.sebastian@gmail.com",
+    "url": "https://sebastianhaeni.ch"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/sebastianhaeni/supersimplemonitoring/issues"
+  },
+  "homepage": "https://github.com/sebastianhaeni/supersimplemonitoring#readme"
+}
