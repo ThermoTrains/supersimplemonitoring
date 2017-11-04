@@ -1,12 +1,20 @@
 <?php
+date_default_timezone_set('Europe/Zurich');
+
 $file = file_get_contents("data/stats.txt");
 $lines = explode("\n", $file);
 $records = [];
+$dataStart = new DateTime();
+$dataStart->sub(new DateInterval('P2D')); // today minus 2 days
 foreach($lines as $line){
     if(strlen($line) === 0){
         continue;
     }
-    $records[] = json_decode($line);
+    $record = json_decode($line);
+    if(new DateTime($record->timestamp) < $dataStart){
+        break;
+    }
+    $records[] = $record;
 }
 ?>
 <!DOCTYPE html>
@@ -84,15 +92,6 @@ foreach($lines as $line){
 <div class="text-center">
     <button type="button" onclick="toggleShowMore()">Show more</button>
 </div>
-
-<div class="show-more">
-<pre><code><?php echo $file ?></code></pre>
-</div>
-
-<p class="footer text-center">
-Made by <a href="https://sebastianhaeni.ch" target="_blank" noopener>Sebastian Häni</a>
-</p>
-
 <script>
 function toggleShowMore(){
     var el = document.getElementsByClassName('show-more')[0];
@@ -112,7 +111,7 @@ var chartOptions = {
     scales: {
         xAxes: [{
             type: 'time',
-            time: {unit: 'day'},
+            time: {unit: 'hour'},
             ticks: {
                 fontColor: '#f0f0f0'
             }
@@ -149,7 +148,7 @@ var myChart = new Chart(ctx, {
     type: 'line',
     data: {
         datasets: [{
-            label: 'Uptime',
+            label: 'Up Time',
             backgroundColor: chartColors.red,
             borderColor: chartColors.red,
             data: [<?php
@@ -167,6 +166,18 @@ foreach(array_reverse($records) as $record){
 
     $last = $record;
 }
+
+$lasttime = (new DateTime($last->timestamp));
+echo "{x: moment('" . $lasttime->format('Y-m-d H:i:s') . "'), y: 100},\n";
+
+$value = 100;
+$lasttime->add(new DateInterval('PT6M'));
+if($lasttime < new DateTime()){
+    $value = 0;
+}
+
+echo "{x: moment('" . (new DateTime())->format('Y-m-d H:i:s') . "'), y: " . $value . "},\n";
+
             ?>],
         }]
     },
@@ -178,16 +189,23 @@ ctx = document.getElementById("chart-cpu").getContext('2d');
 myChart = new Chart(ctx, {
     type: 'line',
     data: {
-        datasets: [{
-            label: 'CPU Usage %',
-            backgroundColor: chartColors.orange,
-            borderColor: chartColors.orange,
-            data: [<?php
-foreach($records as $record){
-    echo "{x: moment('" . $record->timestamp . "'), y: " . ($record->cpu * 100) . "},";
+        datasets: [<?php
+$colors = ["orange","blue","purple","grey"];
+for($i = 0; $i < count($records[0]->cpu); $i++){
+    echo "{label: 'Core ".($i+1)." Load %',fill:false,backgroundColor: chartColors.". $colors[$i] .",borderColor: chartColors.". $colors[$i] .",data: [";
+    foreach($records as $record){
+        echo "{x: moment('" . $record->timestamp . "'), y: " . ($record->cpu[$i] * 100) . "},";
+    }
+    echo "]},";
 }
-?>],
-        }]
+for($i = 0; $i < count($records[0]->cpu); $i++){
+    echo "{label: 'Core ".($i+1)." °C',fill:false,borderDash:[3,3],backgroundColor: chartColors.". $colors[$i] .",borderColor: chartColors.". $colors[$i] .",data: [";
+    foreach($records as $record){
+        echo "{x: moment('" . $record->timestamp . "'), y: " . ($record->temperatures[$i]) . "},";
+    }
+    echo "]},";
+}
+?>]
     },
     options: chartOptions
 });
@@ -230,5 +248,14 @@ foreach($records as $record){
     options: chartOptions
 });
 </script>
+
+<div class="show-more">
+<pre><code><?php echo $file ?></code></pre>
+</div>
+
+<p class="footer text-center">
+Made by <a href="https://sebastianhaeni.ch" target="_blank" noopener>Sebastian Häni</a>
+</p>
+
 </body>
 </html>
