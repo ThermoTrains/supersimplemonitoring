@@ -7,13 +7,20 @@ $records = [];
 $dataStart = new DateTime();
 $dataStart->sub(new DateInterval('P2D')); // today minus 2 days
 foreach($lines as $line){
+    // ignore empty lines
     if(strlen($line) === 0){
         continue;
     }
+
+    // parse line
     $record = json_decode($line);
+
+    // do not show data older than 2 days
     if(new DateTime($record->timestamp) < $dataStart){
         break;
     }
+
+    // appends to records array
     $records[] = $record;
 }
 ?>
@@ -191,6 +198,8 @@ myChart = new Chart(ctx, {
     data: {
         datasets: [<?php
 $colors = ["orange","blue","purple","grey"];
+
+// Usage
 for($i = 0; $i < count($records[0]->cpu); $i++){
     echo "{label: 'Core ".($i+1)." Load %',fill:false,backgroundColor: chartColors.". $colors[$i] .",borderColor: chartColors.". $colors[$i] .",data: [";
     foreach($records as $record){
@@ -198,6 +207,8 @@ for($i = 0; $i < count($records[0]->cpu); $i++){
     }
     echo "]},";
 }
+
+// Temperatures
 for($i = 0; $i < count($records[0]->cpu); $i++){
     echo "{label: 'Core ".($i+1)." °C',fill:false,borderDash:[3,3],backgroundColor: chartColors.". $colors[$i] .",borderColor: chartColors.". $colors[$i] .",data: [";
     foreach($records as $record){
@@ -254,7 +265,7 @@ foreach($records as $record){
 </div>
 
 <p class="footer text-center">
-Made by <a href="https://sebastianhaeni.ch" target="_blank" noopener>Sebastian Häni</a>
+Hacked together by <a href="https://sebastianhaeni.ch" target="_blank" noopener>Sebastian Häni</a>
 </p>
 
 </body>
