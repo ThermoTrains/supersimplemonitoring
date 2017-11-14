@@ -1,5 +1,5 @@
 # Super Simple Monitoring
-Monitor your servers with this super simple monitoring solution
+Monitor your servers with this super simple monitoring solution.
 
 > Caution: This code was hacked together as fast as possible. As little time as possible was spent on this to get it working. This is not how I would normally code.
 
@@ -14,13 +14,15 @@ Execute the following command in the project directory to see the graphs.
 
 ## Payload format
 
-    {
-        "temperatures":  [35, 37, 35, 35], // CPU temperatures in C
-        "cpu": [ 0.02, 0.01, 0, 0.03], // CPU cores usage in %
-        "memory":  0.121317138671875, // memory usage in %
-        "hostname":  "monitored-server-host-name",
-        "disk":  83384045568 // remaining bytes free
-    }
+```javascript
+{
+    "temperatures": [35, 37, 35, 35], // CPU temperatures in C
+    "cpu": [0.02, 0.01, 0, 0.03], // CPU cores usage in %
+    "memory": 0.12, // memory usage in %
+    "hostname": "monitored-server-host-name",
+    "disk": 83384045568 // remaining bytes free
+}
+```
 
 ## Sample ping script
 
