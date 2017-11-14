@@ -203,6 +203,9 @@ $colors = ["orange","blue","purple","grey"];
 for($i = 0; $i < count($records[0]->cpu); $i++){
     echo "{label: 'Core ".($i+1)." Load %',fill:false,backgroundColor: chartColors.". $colors[$i] .",borderColor: chartColors.". $colors[$i] .",data: [";
     foreach($records as $record){
+        if(!is_array($record->cpu)){
+            continue;
+        }
         echo "{x: moment('" . $record->timestamp . "'), y: " . ($record->cpu[$i] * 100) . "},";
     }
     echo "]},";
@@ -212,7 +215,10 @@ for($i = 0; $i < count($records[0]->cpu); $i++){
 for($i = 0; $i < count($records[0]->cpu); $i++){
     echo "{label: 'Core ".($i+1)." °C',fill:false,borderDash:[3,3],backgroundColor: chartColors.". $colors[$i] .",borderColor: chartColors.". $colors[$i] .",data: [";
     foreach($records as $record){
-        echo "{x: moment('" . $record->timestamp . "'), y: " . ($record->temperatures[$i]) . "},";
+        if(!is_array($record->temperatures)){
+            continue;
+        }
+        echo "{x: moment('" . $record->timestamp . "'), y: " . $record->temperatures[$i] . "},";
     }
     echo "]},";
 }
@@ -232,6 +238,9 @@ myChart = new Chart(ctx, {
             borderColor: chartColors.yellow,
             data: [<?php
 foreach($records as $record){
+    if(!is_numeric($record->memory)){
+        continue;
+    }
     echo "{x: moment('" . $record->timestamp . "'), y: " . ($record->memory * 100) . "},";
 }
 ?>],
