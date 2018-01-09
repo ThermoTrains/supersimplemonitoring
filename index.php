@@ -135,9 +135,11 @@ var chartOptions = {
         }]
     },
     elements: {
-        point: {radius: 0}
+        point: {radius: 0},
     }
 };
+
+Chart.defaults.global.elements.line.tension = 0;
 
 var chartColors = {
 	red: 'rgb(255, 99, 132)',
